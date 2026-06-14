@@ -22,7 +22,11 @@ func NewInventoryBalanceRepository(db *sql.DB) InventoryBalanceRepository {
 
 func (r *inventoryBalanceRepository) GetAll(filter model.ListFilter) ([]model.InventoryBalance, int, error) {
 	baseQuery := `
+<<<<<<< HEAD
 		SELECT ib.id, ib.department_id, ib.product_id, ib.quantity, ib.updated_at,
+=======
+		SELECT ib.id, ib.department_id, ib.product_id, ib.quantity, ib.avg_price, ib.total_amount, ib.updated_at,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       d.name as department_name, p.name as product_name, p.sku, pu.short_name as unit_name
 		FROM inventory_balances ib
 		JOIN departments d ON ib.department_id = d.id
@@ -58,7 +62,11 @@ func (r *inventoryBalanceRepository) GetAll(filter model.ListFilter) ([]model.In
 	var balances []model.InventoryBalance
 	for rows.Next() {
 		var b model.InventoryBalance
+<<<<<<< HEAD
 		if err := rows.Scan(&b.ID, &b.DepartmentID, &b.ProductID, &b.Quantity, &b.UpdatedAt,
+=======
+		if err := rows.Scan(&b.ID, &b.DepartmentID, &b.ProductID, &b.Quantity, &b.AvgPrice, &b.TotalAmount, &b.UpdatedAt,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 			&b.DepartmentName, &b.ProductName, &b.SKU, &b.UnitName); err != nil {
 			return nil, 0, err
 		}
@@ -73,14 +81,22 @@ func (r *inventoryBalanceRepository) GetAll(filter model.ListFilter) ([]model.In
 func (r *inventoryBalanceRepository) GetByDepartmentAndProduct(departmentID, productID int) (*model.InventoryBalance, error) {
 	var b model.InventoryBalance
 	err := r.db.QueryRow(`
+<<<<<<< HEAD
 		SELECT ib.id, ib.department_id, ib.product_id, ib.quantity, ib.updated_at,
+=======
+		SELECT ib.id, ib.department_id, ib.product_id, ib.quantity, ib.avg_price, ib.total_amount, ib.updated_at,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       d.name as department_name, p.name as product_name, p.sku, pu.short_name as unit_name
 		FROM inventory_balances ib
 		JOIN departments d ON ib.department_id = d.id
 		JOIN products p ON ib.product_id = p.id
 		JOIN product_units pu ON p.unit_id = pu.id
 		WHERE ib.department_id = ? AND ib.product_id = ?`, departmentID, productID,
+<<<<<<< HEAD
 	).Scan(&b.ID, &b.DepartmentID, &b.ProductID, &b.Quantity, &b.UpdatedAt,
+=======
+	).Scan(&b.ID, &b.DepartmentID, &b.ProductID, &b.Quantity, &b.AvgPrice, &b.TotalAmount, &b.UpdatedAt,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		&b.DepartmentName, &b.ProductName, &b.SKU, &b.UnitName)
 
 	if err == sql.ErrNoRows {
@@ -94,7 +110,11 @@ func (r *inventoryBalanceRepository) GetByDepartmentAndProduct(departmentID, pro
 
 func (r *inventoryBalanceRepository) GetByDepartment(departmentID int) ([]model.InventoryBalance, error) {
 	rows, err := r.db.Query(`
+<<<<<<< HEAD
 		SELECT ib.id, ib.department_id, ib.product_id, ib.quantity, ib.updated_at,
+=======
+		SELECT ib.id, ib.department_id, ib.product_id, ib.quantity, ib.avg_price, ib.total_amount, ib.updated_at,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       d.name as department_name, p.name as product_name, p.sku, pu.short_name as unit_name
 		FROM inventory_balances ib
 		JOIN departments d ON ib.department_id = d.id
@@ -110,7 +130,11 @@ func (r *inventoryBalanceRepository) GetByDepartment(departmentID int) ([]model.
 	var balances []model.InventoryBalance
 	for rows.Next() {
 		var b model.InventoryBalance
+<<<<<<< HEAD
 		if err := rows.Scan(&b.ID, &b.DepartmentID, &b.ProductID, &b.Quantity, &b.UpdatedAt,
+=======
+		if err := rows.Scan(&b.ID, &b.DepartmentID, &b.ProductID, &b.Quantity, &b.AvgPrice, &b.TotalAmount, &b.UpdatedAt,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 			&b.DepartmentName, &b.ProductName, &b.SKU, &b.UnitName); err != nil {
 			return nil, err
 		}

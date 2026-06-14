@@ -26,7 +26,11 @@ func NewDeliveryInvoiceRepository(db *sql.DB) DeliveryInvoiceRepository {
 func (r *deliveryInvoiceRepository) GetAll(filter model.ListFilter) ([]model.DeliveryInvoice, int, error) {
 	query := `
 		SELECT di.id, di.invoice_date, di.supplier_id, di.purchase_request_id, di.status,
+<<<<<<< HEAD
 		       di.created_at, di.cancelled_at, di.recipient_department_id,
+=======
+		       di.created_at, di.cancelled_at, di.recipient_department_id, di.invoice_number, di.total_amount, di.notes,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       s.name as supplier_name, d.name as recipient_department_name
 		FROM delivery_invoices di
 		LEFT JOIN suppliers s ON di.supplier_id = s.id
@@ -47,7 +51,11 @@ func (r *deliveryInvoiceRepository) GetAll(filter model.ListFilter) ([]model.Del
 		var cancelledAt sql.NullTime
 
 		if err := rows.Scan(&di.ID, &di.InvoiceDate, &di.SupplierID, &prID, &di.Status,
+<<<<<<< HEAD
 			&di.CreatedAt, &cancelledAt, &di.RecipientDepartmentID,
+=======
+			&di.CreatedAt, &cancelledAt, &di.RecipientDepartmentID, &di.InvoiceNumber, &di.TotalAmount, &di.Notes,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 			&di.SupplierName, &di.RecipientDepartmentName); err != nil {
 			return nil, 0, err
 		}
@@ -73,14 +81,22 @@ func (r *deliveryInvoiceRepository) GetByID(id int) (*model.DeliveryInvoice, err
 
 	err := r.db.QueryRow(`
 		SELECT di.id, di.invoice_date, di.supplier_id, di.purchase_request_id, di.status,
+<<<<<<< HEAD
 		       di.created_at, di.cancelled_at, di.recipient_department_id,
+=======
+		       di.created_at, di.cancelled_at, di.recipient_department_id, di.invoice_number, di.total_amount, di.notes,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       s.name as supplier_name, d.name as recipient_department_name
 		FROM delivery_invoices di
 		LEFT JOIN suppliers s ON di.supplier_id = s.id
 		LEFT JOIN departments d ON di.recipient_department_id = d.id
 		WHERE di.id = ?`, id,
 	).Scan(&di.ID, &di.InvoiceDate, &di.SupplierID, &prID, &di.Status,
+<<<<<<< HEAD
 		&di.CreatedAt, &cancelledAt, &di.RecipientDepartmentID,
+=======
+		&di.CreatedAt, &cancelledAt, &di.RecipientDepartmentID, &di.InvoiceNumber, &di.TotalAmount, &di.Notes,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		&di.SupplierName, &di.RecipientDepartmentName)
 
 	if err == sql.ErrNoRows {
@@ -107,7 +123,12 @@ func (r *deliveryInvoiceRepository) GetByID(id int) (*model.DeliveryInvoice, err
 
 func (r *deliveryInvoiceRepository) getItems(diID int) ([]model.DeliveryInvoiceItem, error) {
 	rows, err := r.db.Query(`
+<<<<<<< HEAD
 		SELECT dii.id, dii.delivery_invoice_id, dii.product_id, dii.quantity, dii.price,
+=======
+		SELECT dii.id, dii.delivery_invoice_id, dii.product_id, dii.quantity, dii.price, dii.amount,
+		       dii.batch_number, dii.expiry_date, dii.notes, dii.created_at,
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       p.name as product_name, pu.short_name as unit_name
 		FROM delivery_invoice_items dii
 		JOIN products p ON dii.product_id = p.id
@@ -121,10 +142,24 @@ func (r *deliveryInvoiceRepository) getItems(diID int) ([]model.DeliveryInvoiceI
 	var items []model.DeliveryInvoiceItem
 	for rows.Next() {
 		var item model.DeliveryInvoiceItem
+<<<<<<< HEAD
 		if err := rows.Scan(&item.ID, &item.DeliveryInvoiceID, &item.ProductID, &item.Quantity, &item.Price,
 			&item.ProductName, &item.UnitName); err != nil {
 			return nil, err
 		}
+=======
+		var batchNum, expiryDate sql.NullString
+		if err := rows.Scan(&item.ID, &item.DeliveryInvoiceID, &item.ProductID, &item.Quantity, &item.Price, &item.Amount,
+			&batchNum, &expiryDate, &item.Notes, &item.CreatedAt, &item.ProductName, &item.UnitName); err != nil {
+			return nil, err
+		}
+		if batchNum.Valid {
+			item.BatchNumber = &batchNum.String
+		}
+		if expiryDate.Valid {
+			item.ExpiryDate = &expiryDate.String
+		}
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		items = append(items, item)
 	}
 	return items, nil
@@ -138,14 +173,20 @@ func (r *deliveryInvoiceRepository) Create(di *model.DeliveryInvoice) error {
 	defer tx.Rollback()
 
 	result, err := tx.Exec(
+<<<<<<< HEAD
 		"INSERT INTO delivery_invoices (invoice_date, supplier_id, purchase_request_id, status, recipient_department_id) VALUES (?, ?, ?, ?, ?)",
 		di.InvoiceDate, di.SupplierID, di.PurchaseRequestID, di.Status, di.RecipientDepartmentID)
+=======
+		"INSERT INTO delivery_invoices (invoice_date, supplier_id, purchase_request_id, status, recipient_department_id, invoice_number, notes) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		di.InvoiceDate, di.SupplierID, di.PurchaseRequestID, di.Status, di.RecipientDepartmentID, di.InvoiceNumber, di.Notes)
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	if err != nil {
 		return fmt.Errorf("failed to create delivery invoice: %w", err)
 	}
 	id, _ := result.LastInsertId()
 	di.ID = int(id)
 
+<<<<<<< HEAD
 	for i := range di.Items {
 		_, err := tx.Exec(
 			"INSERT INTO delivery_invoice_items (delivery_invoice_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",
@@ -155,13 +196,36 @@ func (r *deliveryInvoiceRepository) Create(di *model.DeliveryInvoice) error {
 		}
 	}
 
+=======
+	var total float64
+	for i := range di.Items {
+		_, err := tx.Exec(
+			"INSERT INTO delivery_invoice_items (delivery_invoice_id, product_id, quantity, price, batch_number, expiry_date, notes) VALUES (?, ?, ?, ?, ?, ?, ?)",
+			di.ID, di.Items[i].ProductID, di.Items[i].Quantity, di.Items[i].Price, di.Items[i].BatchNumber, di.Items[i].ExpiryDate, di.Items[i].Notes)
+		if err != nil {
+			return fmt.Errorf("failed to create delivery invoice item: %w", err)
+		}
+		total += di.Items[i].Quantity * di.Items[i].Price
+	}
+
+	_, err = tx.Exec("UPDATE delivery_invoices SET total_amount = ? WHERE id = ?", total, di.ID)
+	if err != nil {
+		return fmt.Errorf("failed to update total amount: %w", err)
+	}
+	di.TotalAmount = total
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	return tx.Commit()
 }
 
 func (r *deliveryInvoiceRepository) Update(di *model.DeliveryInvoice) error {
 	_, err := r.db.Exec(
+<<<<<<< HEAD
 		"UPDATE delivery_invoices SET invoice_date = ?, supplier_id = ?, purchase_request_id = ?, recipient_department_id = ? WHERE id = ?",
 		di.InvoiceDate, di.SupplierID, di.PurchaseRequestID, di.RecipientDepartmentID, di.ID)
+=======
+		"UPDATE delivery_invoices SET invoice_date = ?, supplier_id = ?, purchase_request_id = ?, recipient_department_id = ?, invoice_number = ?, notes = ? WHERE id = ?",
+		di.InvoiceDate, di.SupplierID, di.PurchaseRequestID, di.RecipientDepartmentID, di.InvoiceNumber, di.Notes, di.ID)
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	if err != nil {
 		return fmt.Errorf("failed to update delivery invoice: %w", err)
 	}
@@ -182,4 +246,8 @@ func (r *deliveryInvoiceRepository) ChangeStatus(id int, status string) error {
 		return fmt.Errorf("failed to change status: %w", err)
 	}
 	return nil
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
