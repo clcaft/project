@@ -24,11 +24,7 @@ func NewDepartmentRepository(db *sql.DB) DepartmentRepository {
 
 func (r *departmentRepository) GetAll(filter model.ListFilter) ([]model.Department, int, error) {
 	allowedSort := map[string]string{"id": "id", "name": "name", "type": "department_type"}
-<<<<<<< HEAD
 	query, args := buildListQuery("SELECT id, name, department_type, is_active FROM departments", filter, allowedSort)
-=======
-	query, args := buildListQuery("SELECT id, name, department_type, is_active, created_at, updated_at FROM departments", filter, allowedSort)
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 
 	rows, err := r.db.Query(query, args...)
 	if err != nil {
@@ -39,11 +35,7 @@ func (r *departmentRepository) GetAll(filter model.ListFilter) ([]model.Departme
 	var departments []model.Department
 	for rows.Next() {
 		var d model.Department
-<<<<<<< HEAD
 		if err := rows.Scan(&d.ID, &d.Name, &d.DepartmentType, &d.IsActive); err != nil {
-=======
-		if err := rows.Scan(&d.ID, &d.Name, &d.DepartmentType, &d.IsActive, &d.CreatedAt, &d.UpdatedAt); err != nil {
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 			return nil, 0, err
 		}
 		departments = append(departments, d)
@@ -55,13 +47,8 @@ func (r *departmentRepository) GetAll(filter model.ListFilter) ([]model.Departme
 
 func (r *departmentRepository) GetByID(id int) (*model.Department, error) {
 	var d model.Department
-<<<<<<< HEAD
 	err := r.db.QueryRow("SELECT id, name, department_type, is_active FROM departments WHERE id = ?", id,
 	).Scan(&d.ID, &d.Name, &d.DepartmentType, &d.IsActive)
-=======
-	err := r.db.QueryRow("SELECT id, name, department_type, is_active, created_at, updated_at FROM departments WHERE id = ?", id,
-	).Scan(&d.ID, &d.Name, &d.DepartmentType, &d.IsActive, &d.CreatedAt, &d.UpdatedAt)
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -95,8 +82,4 @@ func (r *departmentRepository) Delete(id int) error {
 		return fmt.Errorf("failed to delete department: %w", err)
 	}
 	return nil
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766

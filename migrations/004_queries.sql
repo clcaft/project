@@ -4,13 +4,7 @@ SELECT
     d.department_type,
     p.name as product_name,
     p.sku,
-<<<<<<< HEAD
     ib.quantity
-=======
-    ib.quantity,
-    ib.avg_price,
-    ib.total_amount
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 FROM inventory_balances ib
 JOIN departments d ON ib.department_id = d.id
 JOIN products p ON ib.product_id = p.id
@@ -22,11 +16,6 @@ SELECT
     p.sku,
     pu.short_name as unit,
     ib.quantity,
-<<<<<<< HEAD
-=======
-    ib.avg_price,
-    ib.total_amount,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
     ib.updated_at
 FROM inventory_balances ib
 JOIN products p ON ib.product_id = p.id
@@ -40,11 +29,7 @@ SELECT
     s.name as counterparty,
     dii.quantity,
     dii.price,
-<<<<<<< HEAD
     dii.quantity * dii.price as amount,
-=======
-    dii.amount,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
     d.name as department_name
 FROM delivery_invoices di
 JOIN delivery_invoice_items dii ON di.id = dii.delivery_invoice_id
@@ -61,22 +46,13 @@ SELECT
     iti.transfer_date as date,
     d_from.name as counterparty,
     itii.quantity,
-<<<<<<< HEAD
     0 as price,
     0 as amount,
-=======
-    ib.avg_price as price,
-    itii.quantity * ib.avg_price as amount,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
     d_to.name as department_name
 FROM internal_transfer_invoices iti
 JOIN internal_transfer_invoice_items itii ON iti.id = itii.internal_transfer_invoice_id
 JOIN departments d_from ON iti.from_department_id = d_from.id
 JOIN departments d_to ON iti.to_department_id = d_to.id
-<<<<<<< HEAD
-=======
-LEFT JOIN inventory_balances ib ON ib.product_id = itii.product_id AND ib.department_id = iti.from_department_id
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 WHERE itii.product_id = 1
   AND iti.status = 'shipped'
   AND iti.transfer_date BETWEEN '2026-06-01' AND '2026-06-30'
@@ -87,11 +63,7 @@ SELECT
     p.name as product_name,
     p.sku,
     SUM(dii.quantity) as total_quantity,
-<<<<<<< HEAD
     SUM(dii.quantity * dii.price) as total_amount,
-=======
-    SUM(dii.amount) as total_amount,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
     COUNT(DISTINCT di.id) as invoices_count
 FROM delivery_invoices di
 JOIN delivery_invoice_items dii ON di.id = dii.delivery_invoice_id
@@ -122,11 +94,6 @@ SELECT
     p.sku,
     pu.short_name as unit,
     pc.name as category,
-<<<<<<< HEAD
-=======
-    sp.supplier_price,
-    sp.lead_time_days,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
     s.name as supplier_name,
     s.phone as supplier_phone
 FROM products p

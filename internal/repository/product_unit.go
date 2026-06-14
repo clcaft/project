@@ -19,22 +19,14 @@ type productUnitRepository struct{ db *sql.DB }
 func NewProductUnitRepository(db *sql.DB) ProductUnitRepository { return &productUnitRepository{db: db} }
 
 func (r *productUnitRepository) GetAll(filter model.ListFilter) ([]model.ProductUnit, int, error) {
-<<<<<<< HEAD
 	rows, err := r.db.Query(`SELECT id, name, short_name FROM product_units ORDER BY id DESC`)
-=======
-	rows, err := r.db.Query(`SELECT id, name, short_name, created_at FROM product_units ORDER BY id DESC`)
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	if err != nil { return nil, 0, err }
 	defer rows.Close()
 
 	var items []model.ProductUnit
 	for rows.Next() {
 		var pu model.ProductUnit
-<<<<<<< HEAD
 		if err := rows.Scan(&pu.ID, &pu.Name, &pu.ShortName); err != nil {
-=======
-		if err := rows.Scan(&pu.ID, &pu.Name, &pu.ShortName, &pu.CreatedAt); err != nil {
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 			return nil, 0, err
 		}
 		items = append(items, pu)
@@ -46,13 +38,8 @@ func (r *productUnitRepository) GetAll(filter model.ListFilter) ([]model.Product
 
 func (r *productUnitRepository) GetByID(id int) (*model.ProductUnit, error) {
 	var pu model.ProductUnit
-<<<<<<< HEAD
 	err := r.db.QueryRow(`SELECT id, name, short_name FROM product_units WHERE id = ?`, id,
 	).Scan(&pu.ID, &pu.Name, &pu.ShortName)
-=======
-	err := r.db.QueryRow(`SELECT id, name, short_name, created_at FROM product_units WHERE id = ?`, id,
-	).Scan(&pu.ID, &pu.Name, &pu.ShortName, &pu.CreatedAt)
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	if err == sql.ErrNoRows { return nil, nil }
 	if err != nil { return nil, fmt.Errorf("failed to get unit: %w", err) }
 	return &pu, nil

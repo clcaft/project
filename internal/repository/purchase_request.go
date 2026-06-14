@@ -26,11 +26,7 @@ func NewPurchaseRequestRepository(db *sql.DB) PurchaseRequestRepository {
 func (r *purchaseRequestRepository) GetAll(filter model.ListFilter) ([]model.PurchaseRequest, int, error) {
 	query := `
 		SELECT pr.id, pr.request_date, pr.planned_delivery_date, pr.supplier_id, pr.status,
-<<<<<<< HEAD
 		       pr.created_at, pr.cancelled_at, pr.recipient_department_id,
-=======
-		       pr.created_at, pr.cancelled_at, pr.recipient_department_id, pr.created_by, pr.notes,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       s.name as supplier_name, d.name as recipient_department_name
 		FROM purchase_requests pr
 		LEFT JOIN suppliers s ON pr.supplier_id = s.id
@@ -47,20 +43,12 @@ func (r *purchaseRequestRepository) GetAll(filter model.ListFilter) ([]model.Pur
 	var requests []model.PurchaseRequest
 	for rows.Next() {
 		var pr model.PurchaseRequest
-<<<<<<< HEAD
 		var supplierID sql.NullInt64
-=======
-		var supplierID, createdBy sql.NullInt64
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		var plannedDate sql.NullString
 		var cancelledAt sql.NullTime
 
 		if err := rows.Scan(&pr.ID, &pr.RequestDate, &plannedDate, &supplierID, &pr.Status,
-<<<<<<< HEAD
 			&pr.CreatedAt, &cancelledAt, &pr.RecipientDepartmentID,
-=======
-			&pr.CreatedAt, &cancelledAt, &pr.RecipientDepartmentID, &createdBy, &pr.Notes,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 			&pr.SupplierName, &pr.RecipientDepartmentName); err != nil {
 			return nil, 0, err
 		}
@@ -74,13 +62,6 @@ func (r *purchaseRequestRepository) GetAll(filter model.ListFilter) ([]model.Pur
 		if cancelledAt.Valid {
 			pr.CancelledAt = &cancelledAt.Time
 		}
-<<<<<<< HEAD
-=======
-		if createdBy.Valid {
-			cb := int(createdBy.Int64)
-			pr.CreatedBy = &cb
-		}
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		requests = append(requests, pr)
 	}
 
@@ -91,32 +72,20 @@ func (r *purchaseRequestRepository) GetAll(filter model.ListFilter) ([]model.Pur
 
 func (r *purchaseRequestRepository) GetByID(id int) (*model.PurchaseRequest, error) {
 	var pr model.PurchaseRequest
-<<<<<<< HEAD
 	var supplierID sql.NullInt64
-=======
-	var supplierID, createdBy sql.NullInt64
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	var plannedDate sql.NullString
 	var cancelledAt sql.NullTime
 
 	err := r.db.QueryRow(`
 		SELECT pr.id, pr.request_date, pr.planned_delivery_date, pr.supplier_id, pr.status,
-<<<<<<< HEAD
 		       pr.created_at, pr.cancelled_at, pr.recipient_department_id,
-=======
-		       pr.created_at, pr.cancelled_at, pr.recipient_department_id, pr.created_by, pr.notes,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       s.name as supplier_name, d.name as recipient_department_name
 		FROM purchase_requests pr
 		LEFT JOIN suppliers s ON pr.supplier_id = s.id
 		LEFT JOIN departments d ON pr.recipient_department_id = d.id
 		WHERE pr.id = ?`, id,
 	).Scan(&pr.ID, &pr.RequestDate, &plannedDate, &supplierID, &pr.Status,
-<<<<<<< HEAD
 		&pr.CreatedAt, &cancelledAt, &pr.RecipientDepartmentID,
-=======
-		&pr.CreatedAt, &cancelledAt, &pr.RecipientDepartmentID, &createdBy, &pr.Notes,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		&pr.SupplierName, &pr.RecipientDepartmentName)
 
 	if err == sql.ErrNoRows {
@@ -135,13 +104,6 @@ func (r *purchaseRequestRepository) GetByID(id int) (*model.PurchaseRequest, err
 	if cancelledAt.Valid {
 		pr.CancelledAt = &cancelledAt.Time
 	}
-<<<<<<< HEAD
-=======
-	if createdBy.Valid {
-		cb := int(createdBy.Int64)
-		pr.CreatedBy = &cb
-	}
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 
 	items, err := r.getItems(id)
 	if err != nil {
@@ -153,11 +115,7 @@ func (r *purchaseRequestRepository) GetByID(id int) (*model.PurchaseRequest, err
 
 func (r *purchaseRequestRepository) getItems(prID int) ([]model.PurchaseRequestItem, error) {
 	rows, err := r.db.Query(`
-<<<<<<< HEAD
 		SELECT pri.id, pri.purchase_request_id, pri.product_id, pri.quantity,
-=======
-		SELECT pri.id, pri.purchase_request_id, pri.product_id, pri.quantity, pri.estimated_price, pri.notes, pri.created_at,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       p.name as product_name, pu.short_name as unit_name
 		FROM purchase_request_items pri
 		JOIN products p ON pri.product_id = p.id
@@ -171,22 +129,10 @@ func (r *purchaseRequestRepository) getItems(prID int) ([]model.PurchaseRequestI
 	var items []model.PurchaseRequestItem
 	for rows.Next() {
 		var item model.PurchaseRequestItem
-<<<<<<< HEAD
 		if err := rows.Scan(&item.ID, &item.PurchaseRequestID, &item.ProductID, &item.Quantity,
 			&item.ProductName, &item.UnitName); err != nil {
 			return nil, err
 		}
-=======
-		var estPrice sql.NullFloat64
-		if err := rows.Scan(&item.ID, &item.PurchaseRequestID, &item.ProductID, &item.Quantity,
-			&estPrice, &item.Notes, &item.CreatedAt, &item.ProductName, &item.UnitName); err != nil {
-			return nil, err
-		}
-		if estPrice.Valid {
-			ep := estPrice.Float64
-			item.EstimatedPrice = &ep
-		}
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		items = append(items, item)
 	}
 	return items, nil
@@ -200,13 +146,8 @@ func (r *purchaseRequestRepository) Create(pr *model.PurchaseRequest) error {
 	defer tx.Rollback()
 
 	result, err := tx.Exec(
-<<<<<<< HEAD
 		"INSERT INTO purchase_requests (request_date, planned_delivery_date, supplier_id, status, recipient_department_id) VALUES (?, ?, ?, ?, ?)",
 		pr.RequestDate, pr.PlannedDeliveryDate, pr.SupplierID, pr.Status, pr.RecipientDepartmentID)
-=======
-		"INSERT INTO purchase_requests (request_date, planned_delivery_date, supplier_id, status, recipient_department_id, notes) VALUES (?, ?, ?, ?, ?, ?)",
-		pr.RequestDate, pr.PlannedDeliveryDate, pr.SupplierID, pr.Status, pr.RecipientDepartmentID, pr.Notes)
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	if err != nil {
 		return fmt.Errorf("failed to create purchase request: %w", err)
 	}
@@ -215,13 +156,8 @@ func (r *purchaseRequestRepository) Create(pr *model.PurchaseRequest) error {
 
 	for i := range pr.Items {
 		_, err := tx.Exec(
-<<<<<<< HEAD
 			"INSERT INTO purchase_request_items (purchase_request_id, product_id, quantity) VALUES (?, ?, ?)",
 			pr.ID, pr.Items[i].ProductID, pr.Items[i].Quantity)
-=======
-			"INSERT INTO purchase_request_items (purchase_request_id, product_id, quantity, estimated_price, notes) VALUES (?, ?, ?, ?, ?)",
-			pr.ID, pr.Items[i].ProductID, pr.Items[i].Quantity, pr.Items[i].EstimatedPrice, pr.Items[i].Notes)
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		if err != nil {
 			return fmt.Errorf("failed to create purchase request item: %w", err)
 		}
@@ -231,13 +167,8 @@ func (r *purchaseRequestRepository) Create(pr *model.PurchaseRequest) error {
 
 func (r *purchaseRequestRepository) Update(pr *model.PurchaseRequest) error {
 	_, err := r.db.Exec(
-<<<<<<< HEAD
 		"UPDATE purchase_requests SET request_date = ?, planned_delivery_date = ?, supplier_id = ?, recipient_department_id = ? WHERE id = ?",
 		pr.RequestDate, pr.PlannedDeliveryDate, pr.SupplierID, pr.RecipientDepartmentID, pr.ID)
-=======
-		"UPDATE purchase_requests SET request_date = ?, planned_delivery_date = ?, supplier_id = ?, recipient_department_id = ?, notes = ? WHERE id = ?",
-		pr.RequestDate, pr.PlannedDeliveryDate, pr.SupplierID, pr.RecipientDepartmentID, pr.Notes, pr.ID)
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	if err != nil {
 		return fmt.Errorf("failed to update purchase request: %w", err)
 	}
@@ -258,8 +189,4 @@ func (r *purchaseRequestRepository) ChangeStatus(id int, status string) error {
 		return fmt.Errorf("failed to change status: %w", err)
 	}
 	return nil
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766

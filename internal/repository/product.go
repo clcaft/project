@@ -24,11 +24,7 @@ func NewProductRepository(db *sql.DB) ProductRepository {
 
 func (r *productRepository) GetAll(filter model.ListFilter) ([]model.Product, int, error) {
 	query := `
-<<<<<<< HEAD
 		SELECT p.id, p.name, p.sku, p.unit_id, p.category_id, p.is_active,
-=======
-		SELECT p.id, p.name, p.sku, p.unit_id, p.category_id, p.is_active, p.created_at, p.updated_at,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       pu.short_name as unit_name, pc.name as category_name
 		FROM products p
 		LEFT JOIN product_units pu ON p.unit_id = pu.id
@@ -46,11 +42,7 @@ func (r *productRepository) GetAll(filter model.ListFilter) ([]model.Product, in
 	for rows.Next() {
 		var p model.Product
 		var catID sql.NullInt64
-<<<<<<< HEAD
 		if err := rows.Scan(&p.ID, &p.Name, &p.SKU, &p.UnitID, &catID, &p.IsActive, &p.UnitName, &p.CategoryName); err != nil {
-=======
-		if err := rows.Scan(&p.ID, &p.Name, &p.SKU, &p.UnitID, &catID, &p.IsActive, &p.CreatedAt, &p.UpdatedAt, &p.UnitName, &p.CategoryName); err != nil {
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 			return nil, 0, err
 		}
 		if catID.Valid {
@@ -69,21 +61,13 @@ func (r *productRepository) GetByID(id int) (*model.Product, error) {
 	var p model.Product
 	var catID sql.NullInt64
 	err := r.db.QueryRow(`
-<<<<<<< HEAD
 		SELECT p.id, p.name, p.sku, p.unit_id, p.category_id, p.is_active,
-=======
-		SELECT p.id, p.name, p.sku, p.unit_id, p.category_id, p.is_active, p.created_at, p.updated_at,
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 		       pu.short_name as unit_name, pc.name as category_name
 		FROM products p
 		LEFT JOIN product_units pu ON p.unit_id = pu.id
 		LEFT JOIN product_categories pc ON p.category_id = pc.id
 		WHERE p.id = ?`, id,
-<<<<<<< HEAD
 	).Scan(&p.ID, &p.Name, &p.SKU, &p.UnitID, &catID, &p.IsActive, &p.UnitName, &p.CategoryName)
-=======
-	).Scan(&p.ID, &p.Name, &p.SKU, &p.UnitID, &catID, &p.IsActive, &p.CreatedAt, &p.UpdatedAt, &p.UnitName, &p.CategoryName)
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -121,8 +105,4 @@ func (r *productRepository) Delete(id int) error {
 		return fmt.Errorf("failed to delete product: %w", err)
 	}
 	return nil
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> fc07f468f8ab1a3e8bbde8aad30dcf077a584766
